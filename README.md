@@ -1,8 +1,8 @@
 # eli5-mode
 
-<img width="200" height="200" alt="claude-eli5" src="https://github.com/user-attachments/assets/7622dfd7-e538-435e-91ac-eef11cf8b30f" />
+> A Claude Code skill that makes Claude talk like you're 5
 
-**A Claude Code skill that makes Claude talk like you're 5.**
+<img width="200" height="200" alt="claude-eli5" src="https://github.com/user-attachments/assets/7622dfd7-e538-435e-91ac-eef11cf8b30f" />
 
 No jargon. No walls of text. Just analogies, plain words, and explanations that actually stick.
 
