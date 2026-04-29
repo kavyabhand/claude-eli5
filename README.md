@@ -1,5 +1,8 @@
 # eli5-mode
 
+<img width="200" height="200" alt="download" src="https://github.com/user-attachments/assets/fc455497-a820-428c-85b6-96ea3a2819fc" />
+
+<br>
 A Claude Code skill that makes Claude explain everything like you're 5 years old (or whatever age you pick).
 
 Analogy-first. Zero jargon. Radically simplified but always accurate.
