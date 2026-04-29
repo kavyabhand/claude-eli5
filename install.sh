@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-SKILLS=(eli5-mode eli-kid eli-teen eli-adult eli-expert eli-off eli-status eli-deeper eli-simpler eli-save eli-quiz eli-doc)
+SKILLS=(eli5-mode eli-kid eli-teen eli-adult eli-expert eli-off eli-status eli-deeper eli-simpler eli-save eli-quiz eli-doc eli-pr eli-brief eli-commit eli-compare eli-prereqs eli-teach eli-recap eli-remember eli-tweet eli-tldr)
 SKILLS_DIR="${HOME}/.claude/skills"
 HOOKS_DIR="${HOME}/.claude/hooks"
 CLAUDE_DIR="${HOME}/.claude"
@@ -157,8 +157,14 @@ echo ""
 echo "  Activate:   eli5 · ELI5 · /eli5 · dumb it down · explain simply"
 echo "  Levels:     /eli-kid · /eli-teen · /eli-adult · /eli-expert"
 echo "  Navigate:   /eli-deeper · /eli-simpler"
-echo "  Utilities:  /eli-status · /eli-save · /eli-quiz · /eli-doc"
+echo ""
+echo "  Learning:   /eli-compare · /eli-prereqs · /eli-teach · /eli-quiz · /eli-recap"
+echo "  Formats:    /eli-brief · /eli-tweet · /eli-tldr"
+echo "  Workflow:   /eli-pr · /eli-commit"
+echo "  Memory:     /eli-remember · /eli-save · /eli-doc [--team]"
+echo ""
 echo "  Turn off:   /eli-off · stop eli5 · normal mode"
 echo ""
 echo "  Auto-activate: drop a .eli5rc in your project (see examples/eli5rc-example)"
+echo "  Passive mode:  add passive_mode=true to .eli5rc for background jargon nudges"
 echo ""

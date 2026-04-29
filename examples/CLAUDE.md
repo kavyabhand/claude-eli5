@@ -11,11 +11,13 @@ If `.claude/eli5-expert-field` exists, use that as the user's field for /eli-exp
 without asking them to repeat it.
 
 Available commands:
-/eli5 /eli-kid /eli-teen /eli-adult /eli-expert  — activate at that level
-/eli-deeper /eli-simpler                          — step one level on the ladder
-/eli-off                                          — deactivate
-/eli-status                                       — show current level
-/eli-save                                         — export session explanations to eli5-notes.md
-/eli-quiz                                         — test understanding of last explanation
-/eli-doc                                          — generate ELI5.md glossary for this codebase
+
+Levels:      /eli5 /eli-kid /eli-teen /eli-adult /eli-expert
+Navigate:    /eli-deeper /eli-simpler
+On/off:      /eli-off /eli-status
+
+Learning:    /eli-compare /eli-prereqs /eli-teach /eli-quiz /eli-recap
+Formats:     /eli-brief /eli-tweet /eli-tldr
+Workflow:    /eli-pr /eli-commit
+Memory:      /eli-remember /eli-save /eli-doc
 <!-- eli5-mode:end -->

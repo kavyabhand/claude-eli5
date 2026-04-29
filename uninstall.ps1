@@ -5,7 +5,9 @@ param()
 $ErrorActionPreference = 'Stop'
 
 $Skills    = @('eli5-mode','eli-kid','eli-teen','eli-adult','eli-expert',
-               'eli-off','eli-status','eli-deeper','eli-simpler','eli-save','eli-quiz','eli-doc')
+               'eli-off','eli-status','eli-deeper','eli-simpler','eli-save','eli-quiz','eli-doc',
+               'eli-pr','eli-brief','eli-commit','eli-compare','eli-prereqs','eli-teach',
+               'eli-recap','eli-remember','eli-tweet','eli-tldr')
 $ClaudeDir = Join-Path $env:USERPROFILE '.claude'
 $SkillsDir = Join-Path $ClaudeDir 'skills'
 $removed   = 0

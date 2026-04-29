@@ -1,12 +1,12 @@
 # eli5-mode
 
-> A Claude Code skill that makes Claude talk like you're 5.
+> The Claude Code skill that makes complex things make sense — and keeps them that way.
 
 <img width="200" height="200" alt="claude-eli5" src="https://github.com/user-attachments/assets/7622dfd7-e538-435e-91ac-eef11cf8b30f" />
 
 No definitions. No jargon. No walls of text.
 
-Analogy-first explanations at exactly the level you choose — and they actually stick.
+22 commands that change how Claude explains, compares, teaches, and writes — at exactly the level you choose.
 
 ---
 
@@ -28,12 +28,25 @@ cd claude-eli5
 
 > **Windows script blocked?** Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` first.
 
-Start a new Claude Code session. All 12 commands are live.
+Start a new Claude Code session. All 22 commands are live.
 
 **Update:**
 ```bash
 ./update.sh
 ```
+
+---
+
+## Why you'll actually use this every day
+
+Most tools make you smarter *about* a topic. eli5-mode makes you better at *communicating* it.
+
+You'll reach for it in four situations — none of which require you to be confused:
+
+1. **You're learning something new** — `/eli-prereqs` shows you the path, `/eli-teach` walks you through it, `/eli-compare` puts it side by side with something you already know
+2. **You need to write for a non-technical audience** — `/eli-pr` writes your PR description, `/eli-brief` writes your Slack message to your manager, `/eli-commit` writes the commit message
+3. **You need to check your own understanding** — `/eli-tweet` forces you to compress it to 280 chars, `/eli-quiz` tests it, `/eli-tldr` distills it to 3 bullets
+4. **Your team needs onboarding docs** — `/eli-doc --team` generates a committed `ELI5.md` that explains your entire codebase in plain language
 
 ---
 
@@ -56,26 +69,64 @@ Use a command alone or with a question:
 /eli-expert I'm a surgeon. What is async/await?
 ```
 
-### Navigation
+### Navigate levels
 
 | Command | What it does |
 |---|---|
-| `/eli-deeper` | Step one level more technical. Re-explains the last concept at the new level. |
-| `/eli-simpler` | Step one level simpler. Re-explains the last concept at the new level. |
+| `/eli-deeper` | One level more technical. Re-explains the last concept. |
+| `/eli-simpler` | One level simpler. Re-explains the last concept. |
 
-### Utilities
+---
+
+### Learning tools
 
 | Command | What it does |
 |---|---|
-| `/eli-status` | Show current mode and level. |
-| `/eli-save` | Export all eli5 explanations from this session to `eli5-notes.md`. |
-| `/eli-quiz` | Test your understanding of the last explanation. |
-| `/eli-doc` | Scan the current codebase and write `ELI5.md` — a plain-language glossary. |
+| `/eli-compare X vs Y` | Side-by-side comparison using the same analogy domain. One analogy per concept, one key difference, one "use X when / use Y when." |
+| `/eli-prereqs [topic]` | Shows what you need to understand first — a real learning path, not "learn programming fundamentals." Checks what you've already covered. |
+| `/eli-teach [topic]` | Socratic mode. Guides you to the answer through questions instead of explaining it. You actually remember what you figure out yourself. |
+| `/eli-quiz` | 2–3 level-appropriate questions on the last explanation. One at a time. Feedback in eli5 style. |
+| `/eli-recap` | Digest of everything explained this session. Saves a concept index to `.claude/eli5-concepts.json` so future sessions can build on this one. |
 
-### Deactivate
+---
+
+### Format variants — same concept, different shape
+
+| Command | What it does |
+|---|---|
+| `/eli-brief [topic]` | 3 sentences. Safe to paste to your director, a client, or a board deck. Each sentence ≤ 20 words. |
+| `/eli-tweet [topic]` | 280 characters or fewer. Shows character count. Challenge: "shorter" to try again at ≤ 140. If you can't say it in 280 chars, you don't fully understand it. |
+| `/eli-tldr [topic]` | Exactly 3 bullets: what it is, why it matters, key thing to know. No prose. |
+
+---
+
+### Workflow tools — useful even when you're not confused
+
+| Command | What it does |
+|---|---|
+| `/eli-pr` | Reads `git diff main...HEAD` and writes a PR description: what changed, why, how to test, risk level. Audience: your manager, a designer, a PM. |
+| `/eli-commit` | Reads staged changes and writes a commit message focused on *why*, not just *what*. No jargon in the subject line. |
+
+**`/eli-pr` is the one that becomes a habit.** Engineers open PRs constantly. If the skill writes the plain-language description automatically, this stops being a "when I'm confused" tool and becomes a daily one.
+
+---
+
+### Memory — knowledge that survives sessions
+
+| Command | What it does |
+|---|---|
+| `/eli-remember` | Saves the last analogy (or one you specify) to `custom-analogies.md`. Checked before the built-in bank in every future session. |
+| `/eli-save` | Exports all eli5 explanations from this session to `eli5-notes.md`. |
+| `/eli-doc` | Scans the current codebase and writes `ELI5.md` — a plain-language glossary of everything in it. |
+| `/eli-doc --team` | Same, but structured for committing to the repo. Adds "new hire start here" section, gotchas, and a full glossary. Every future hire gets it automatically. |
+
+---
+
+### Control
 
 ```
 /eli-off      stop eli5      normal mode      talk normally
+/eli-status   — show current level
 ```
 
 ---
@@ -98,11 +149,23 @@ Drop a `.eli5rc` file in your project root and eli5-mode activates automatically
 
 ```bash
 # .eli5rc
+
+# Explanation level
 level=eli-adult
 
-# for /eli-expert, add your field:
+# Expert field (for /eli-expert auto-activation)
 # expert_field=medicine
+
+# Passive jargon scan — appends a plain-language footnote after any response
+# that contains unexplained technical terms. Works without a level active.
+# passive_mode=true
+
+# Proactive offers — Claude will offer to eli5 the most unfamiliar-looking
+# term in each response, one line, non-intrusive.
+# proactive=true
 ```
+
+**The team setup**: add `passive_mode=true` to the repo's `.eli5rc`. Every team member gets a nudge toward clearer language in their session, without having to opt in individually.
 
 See `examples/eli5rc-example` for all options.
 
@@ -129,6 +192,44 @@ One concept. Five levels.
 
 ---
 
+**`/eli-compare` — SQL vs NoSQL**
+> **SQL** — like a spreadsheet where every row must follow the exact same column layout.
+> **NoSQL** — like a folder of sticky notes where each note can have whatever's written on it.
+>
+> **Same**: both store and retrieve data; both need organization to stay fast at scale.
+> **Different**: SQL forces structure upfront; NoSQL lets structure evolve as you go.
+>
+> **Use SQL when**: your data is predictable and relationships matter (orders + customers).
+> **Use NoSQL when**: your data varies per item or you need to scale reads to millions of users fast.
+
+---
+
+**`/eli-brief` — Rate limiting** *(safe for Slack to your director)*
+> Rate limiting is like a bouncer at a door who lets in only a set number of people per minute.
+> It stops one bad actor from overwhelming a system and slowing it down for everyone else.
+> Our API currently allows 100 requests per minute per user — raise or lower it in the dashboard.
+
+---
+
+**`/eli-pr`** *(reads your actual git diff)*
+```
+## What changed
+Added automatic retry when the server is temporarily unavailable.
+
+## Why
+A single slow moment was failing the entire request for the user — now we try up to 3 times.
+
+## How to test
+- Make a request while the server is intentionally slow (add 5s delay in dev)
+- Confirm the request succeeds after the retry
+- Confirm normal requests are unaffected
+
+## Risk
+Low risk — retry logic only activates on network errors, not on application errors.
+```
+
+---
+
 ## Different analogy? Just ask.
 
 If an analogy doesn't click, say any of these and Claude will generate a completely different one — never reusing one it already gave:
@@ -142,9 +243,15 @@ try again           give me another one   that one didn't click
 
 ## How it works
 
-`eli5-mode` is a **behavioral skill** — it changes *how* Claude communicates, not what it knows. Each level is a registered slash command with its own `SKILL.md`. A `SessionStart` hook auto-activates for projects with `.eli5rc`. All levels share a central rules file so they stay consistent.
+`eli5-mode` is a **behavioral skill** — it changes *how* Claude communicates, not what it knows. Three hooks work together:
 
-Eight rules baked into every level:
+| Hook | When it fires | What it does | Token cost |
+|---|---|---|---|
+| `SessionStart` | Once | Reads `core-rules.md` at runtime, injects full rules + activation | ~675t once |
+| `UserPromptSubmit` | Every turn | 25-token reinforcement, level-switch detection, deactivation detection | ~25t/turn |
+| Statusline | Every turn | Renders `[ELI5]` / `[ELI5:TEEN]` badge | 0t |
+
+Eight rules baked into every response:
 
 1. **Analogy first** — never define, always compare
 2. **Kill jargon** — replace words that need explaining, don't explain them
@@ -159,40 +266,14 @@ Eight rules baked into every level:
 
 ## Token efficiency
 
-Every token you spend on meta-instructions is a token not spent on your actual answer. eli5-mode v3 is engineered to minimize that overhead without letting quality drift.
-
-### Three-hook architecture
-
-| Hook | When it fires | What it does |
-|---|---|---|
-| `SessionStart` | Once per session | Reads `core-rules.md` at runtime — full rules injected once, not on every activation |
-| `UserPromptSubmit` | Every turn | 25-token reinforcement prevents drift; detects level switches and deactivation in-flight |
-| Statusline | Every turn | Zero-token — renders the `[ELI5]` badge from the flag file, no prompt overhead |
-
-### Measured overhead per 20-turn session
-
-| | Level stub size | Per-turn overhead | Drift re-activations | **Total eli5 overhead** |
+| | Level stub size | Per-turn overhead | Drift re-activations | **Total / 20-turn session** |
 |---|---|---|---|---|
 | v2 (rules baked in) | ~450 tokens | 0 | 1 typical (~450t) | **~1,575 tokens** |
-| v3 (per-turn hook) | ~150 tokens | 25t × 20 = 500t | 0 (prevented) | **~1,325 tokens** |
+| v3+ (per-turn hook) | ~150 tokens | 25t × 20 = 500t | 0 (prevented) | **~1,325 tokens** |
 
-That's **~16% lower** in the typical case — but the real win is that v2's number gets *worse* every time Claude drifts (each re-activation costs another 450 tokens). v3's number is a fixed ceiling.
+16% lower token cost. Zero drift. The per-turn hook catches deactivation and level switches in-flight — no extra round trips.
 
-### How drift is prevented
-
-Without reinforcement, Claude gradually stops following eli5 rules after 10–15 turns. The `UserPromptSubmit` hook fires before every response and injects a 25-token reminder:
-
-```
-ELI5 ACTIVE (eli-teen / 15yo). Pop culture/gaming. Get to the point fast.
-Core rules: analogy-first, kill jargon, short sentences, accurate, concrete, no condescension.
-Persist every response. /eli-off to deactivate.
-```
-
-25 tokens per turn. No drift. No re-activation cost.
-
-### Single source of truth
-
-`core-rules.md` is read at runtime by the `SessionStart` hook — not duplicated into each level stub. Edit the file, restart your session, and all five levels pick up the change instantly. No reinstall needed.
+`core-rules.md` is read at runtime, not baked into each stub. Edit the rules, restart your session, all five levels pick up the change instantly. No reinstall.
 
 ---
 
@@ -221,25 +302,24 @@ claude-eli5/
 │   │   └── references/
 │   │       ├── core-rules.md    shared enforcement rules (single source of truth)
 │   │       ├── analogy-bank.md  40+ ready-to-use analogies
-│   │       └── custom-analogies.md  add your own
-│   ├── eli-kid/SKILL.md         age 10
-│   ├── eli-teen/SKILL.md        age 15
-│   ├── eli-adult/SKILL.md       smart non-expert
-│   ├── eli-expert/SKILL.md      expert in adjacent field (with field memory)
-│   ├── eli-off/SKILL.md         deactivate
-│   ├── eli-status/SKILL.md      check current level
-│   ├── eli-deeper/SKILL.md      step one level more technical
-│   ├── eli-simpler/SKILL.md     step one level simpler
-│   ├── eli-save/SKILL.md        export session explanations to file
-│   ├── eli-quiz/SKILL.md        test your understanding
-│   └── eli-doc/SKILL.md         generate ELI5.md for the codebase
+│   │       └── custom-analogies.md  add your own, checked first every session
+│   │
+│   ├── eli-kid/        eli-teen/        eli-adult/        eli-expert/
+│   ├── eli-off/        eli-status/      eli-deeper/       eli-simpler/
+│   │
+│   ├── eli-compare/    eli-prereqs/     eli-teach/        eli-quiz/        eli-recap/
+│   ├── eli-brief/      eli-tweet/       eli-tldr/
+│   ├── eli-pr/         eli-commit/
+│   ├── eli-remember/   eli-save/        eli-doc/
+│   │
 ├── hooks/
-│   ├── eli5-session-start.sh    SessionStart — reads core-rules.md, auto-activates from .eli5rc
-│   ├── eli5-per-turn.js         UserPromptSubmit — 25-token per-turn reinforcement, drift prevention
-│   └── eli5-statusline.sh       Statusline — orange [ELI5] / [ELI5:TEEN] badge
+│   ├── eli5-session-start.sh    SessionStart — rules injection, .eli5rc auto-activation,
+│   │                            passive_mode and proactive flag support
+│   ├── eli5-per-turn.js         UserPromptSubmit — 25-token drift prevention per turn
+│   └── eli5-statusline.sh       Statusline badge — [ELI5] / [ELI5:TEEN] etc.
 ├── examples/
-│   ├── eli5rc-example           sample .eli5rc config
-│   └── CLAUDE.md                block to add to your project's CLAUDE.md
+│   ├── eli5rc-example           sample .eli5rc with all options documented
+│   └── CLAUDE.md                block added to ~/.claude/CLAUDE.md on install
 ├── install.sh / install.ps1
 ├── uninstall.sh / uninstall.ps1
 ├── update.sh

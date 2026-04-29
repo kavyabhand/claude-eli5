@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-SKILLS=(eli5-mode eli-kid eli-teen eli-adult eli-expert eli-off eli-status eli-deeper eli-simpler eli-save eli-quiz eli-doc)
+SKILLS=(eli5-mode eli-kid eli-teen eli-adult eli-expert eli-off eli-status eli-deeper eli-simpler eli-save eli-quiz eli-doc eli-pr eli-brief eli-commit eli-compare eli-prereqs eli-teach eli-recap eli-remember eli-tweet eli-tldr)
 CLAUDE_DIR="${HOME}/.claude"
 SKILLS_DIR="${CLAUDE_DIR}/skills"
 HOOKS_DIR="${CLAUDE_DIR}/hooks"

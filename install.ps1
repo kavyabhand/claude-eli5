@@ -5,7 +5,9 @@ param([switch]$NoHooks)
 $ErrorActionPreference = 'Stop'
 
 $Skills     = @('eli5-mode','eli-kid','eli-teen','eli-adult','eli-expert',
-                'eli-off','eli-status','eli-deeper','eli-simpler','eli-save','eli-quiz','eli-doc')
+                'eli-off','eli-status','eli-deeper','eli-simpler','eli-save','eli-quiz','eli-doc',
+                'eli-pr','eli-brief','eli-commit','eli-compare','eli-prereqs','eli-teach',
+                'eli-recap','eli-remember','eli-tweet','eli-tldr')
 $ClaudeDir  = Join-Path $env:USERPROFILE '.claude'
 $SkillsDir  = Join-Path $ClaudeDir 'skills'
 $HooksDir   = Join-Path $ClaudeDir 'hooks'
@@ -139,8 +141,14 @@ Write-Host ""
 Write-Host "  Activate:   eli5 · ELI5 · /eli5 · dumb it down · explain simply"
 Write-Host "  Levels:     /eli-kid · /eli-teen · /eli-adult · /eli-expert"
 Write-Host "  Navigate:   /eli-deeper · /eli-simpler"
-Write-Host "  Utilities:  /eli-status · /eli-save · /eli-quiz · /eli-doc"
+Write-Host ""
+Write-Host "  Learning:   /eli-compare · /eli-prereqs · /eli-teach · /eli-quiz · /eli-recap"
+Write-Host "  Formats:    /eli-brief · /eli-tweet · /eli-tldr"
+Write-Host "  Workflow:   /eli-pr · /eli-commit"
+Write-Host "  Memory:     /eli-remember · /eli-save · /eli-doc [--team]"
+Write-Host ""
 Write-Host "  Turn off:   /eli-off · stop eli5 · normal mode"
 Write-Host ""
 Write-Host "  Auto-activate: drop a .eli5rc in your project (see examples/eli5rc-example)"
+Write-Host "  Passive mode:  add passive_mode=true to .eli5rc for background jargon nudges"
 Write-Host ""

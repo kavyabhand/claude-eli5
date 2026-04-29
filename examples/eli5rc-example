@@ -1,16 +1,27 @@
 # .eli5rc — eli5-mode project configuration
 #
 # Place this file in your project root or home directory (~/.eli5rc).
-# When present, eli5-mode activates automatically at the start of every session.
+# When present, eli5-mode auto-activates at the start of every session.
 #
 # Levels: eli5 | eli-kid | eli-teen | eli-adult | eli-expert
 
-# Set your preferred level
+# ── Level ──────────────────────────────────────────────────────────────────────
+# Set your preferred explanation level
 level=eli-adult
 
-# For eli-expert only: your professional background
-# Claude will use your field's vocabulary to explain everything
+# ── Expert field (eli-expert only) ────────────────────────────────────────────
+# Claude will use your field's vocabulary to explain everything — no jargon mixing
 # expert_field=medicine
 # expert_field=law
 # expert_field=architecture
 # expert_field=finance
+
+# ── Passive mode (works without a level) ──────────────────────────────────────
+# Adds a plain-language footnote after any response that contains unexplained jargon.
+# Great for teams — everyone gets a nudge toward clearer language without full eli5 mode.
+# passive_mode=true
+
+# ── Proactive offers ──────────────────────────────────────────────────────────
+# Claude will offer to eli5 the most unfamiliar-looking technical term in each response.
+# Low-noise: one offer per response maximum, skipped if already in eli5 mode.
+# proactive=true

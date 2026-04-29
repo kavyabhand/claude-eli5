@@ -92,6 +92,16 @@ Use this structure:
 
 "Written `ELI5.md` — [N] concepts, [M] files documented at [level] level."
 
+## Team mode: `/eli-doc --team`
+
+When `--team` is specified, produce a version designed to be **committed to the repo** as an onboarding artifact:
+
+- Add a "New hire start here" section at the top with the 3 most important files to read first
+- Include a "Gotchas" section: 3–5 things that trip up newcomers in this specific codebase
+- Add a "Glossary" section: every domain-specific or project-specific term, plain-language only
+- Output filename: `ELI5.md` (same) — but add a header note: `> Intended for new contributors. Keep this up to date.`
+- Suggest: "Commit this as `ELI5.md` in the repo root — it'll be there for every new hire."
+
 ## Important
 
 - Stay at the eli5 level throughout. No technical jargon in the output.
