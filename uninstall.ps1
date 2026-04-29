@@ -4,22 +4,52 @@ param()
 
 $ErrorActionPreference = 'Stop'
 
-$Skills    = @('eli5-mode', 'eli-kid', 'eli-teen', 'eli-adult', 'eli-expert')
-$SkillsDir = Join-Path $env:USERPROFILE '.claude\skills'
+$Skills    = @('eli5-mode','eli-kid','eli-teen','eli-adult','eli-expert',
+               'eli-off','eli-status','eli-deeper','eli-simpler','eli-save','eli-quiz','eli-doc')
+$ClaudeDir = Join-Path $env:USERPROFILE '.claude'
+$SkillsDir = Join-Path $ClaudeDir 'skills'
 $removed   = 0
+
+function Write-Ok   ($msg) { Write-Host "  ✓ $msg" -ForegroundColor Green }
+function Write-Warn ($msg) { Write-Host "  ! $msg" -ForegroundColor Yellow }
 
 foreach ($skill in $Skills) {
     $dest = Join-Path $SkillsDir $skill
     if (Test-Path $dest) {
         Remove-Item -Recurse -Force $dest
-        Write-Host "  ✓ Removed ${skill}" -ForegroundColor Green
+        Write-Ok "Removed skill: $skill"
         $removed++
     }
 }
 
+$hook = Join-Path $ClaudeDir 'hooks\eli5-session-start.sh'
+if (Test-Path $hook) {
+    Remove-Item -Force $hook
+    Write-Ok "Removed hook"
+}
+
+$settingsPath = Join-Path $ClaudeDir 'settings.json'
+if ((Test-Path $settingsPath) -and (Get-Command node -ErrorAction SilentlyContinue)) {
+    $nodeScript = @"
+const fs = require('fs');
+const sp = '$($settingsPath -replace '\\','\\\\')';
+let s = {};
+try { s = JSON.parse(fs.readFileSync(sp,'utf8')); } catch { process.exit(0); }
+if (!s.hooks?.SessionStart) process.exit(0);
+s.hooks.SessionStart = s.hooks.SessionStart.filter(
+  h => !h.hooks?.some(hh => hh.command?.includes('eli5-session-start'))
+);
+if (s.hooks.SessionStart.length === 0) delete s.hooks.SessionStart;
+fs.writeFileSync(sp, JSON.stringify(s,null,2));
+"@
+    node -e $nodeScript 2>$null
+    Write-Ok "Removed from settings.json"
+}
+
 if ($removed -eq 0) {
-    Write-Host "  ! Nothing to remove — eli5-mode was not installed." -ForegroundColor Yellow
+    Write-Warn "No eli5-mode skills found — was it installed?"
 } else {
     Write-Host ""
     Write-Host "  eli5-mode uninstalled."
+    Write-Warn "CLAUDE.md patch was not removed — remove the '## eli5-mode' block manually if needed."
 }

@@ -1,0 +1,16 @@
+# .eli5rc — eli5-mode project configuration
+#
+# Place this file in your project root or home directory (~/.eli5rc).
+# When present, eli5-mode activates automatically at the start of every session.
+#
+# Levels: eli5 | eli-kid | eli-teen | eli-adult | eli-expert
+
+# Set your preferred level
+level=eli-adult
+
+# For eli-expert only: your professional background
+# Claude will use your field's vocabulary to explain everything
+# expert_field=medicine
+# expert_field=law
+# expert_field=architecture
+# expert_field=finance

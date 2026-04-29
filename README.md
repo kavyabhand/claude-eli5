@@ -6,29 +6,7 @@
 
 No definitions. No jargon. No walls of text.
 
-Just analogies, plain words, and explanations that actually stick — calibrated to exactly how much you want simplified.
-
----
-
-## What it does
-
-You're reading a codebase. You hit something you don't fully get. You ask Claude to explain it.
-
-Normally you get a paragraph that starts with "X is a framework that enables Y to do Z via..." — which is technically correct and completely useless if you're not already in the domain.
-
-With eli5-mode active:
-
-```
-You:    eli5 what is a load balancer
-
-Claude: Imagine a traffic cop at a busy intersection. When too many cars
-        head toward the same lane, the cop waves some into other lanes
-        so nobody gets stuck.
-
-        A load balancer does the same thing for your servers.
-```
-
-Every response. Every time. Until you turn it off.
+Analogy-first explanations at exactly the level you choose — and they actually stick.
 
 ---
 
@@ -50,96 +28,132 @@ cd claude-eli5
 
 > **Windows script blocked?** Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` first.
 
-Start a new Claude Code session. All five commands are live.
+Start a new Claude Code session. All 12 commands are live.
 
-**Update anytime:**
+**Update:**
 ```bash
 ./update.sh
 ```
 
 ---
 
-## The commands
+## The full command set
 
-Five levels. Each is its own slash command.
+### Levels — each is its own slash command
 
-| Command | Who it's for | What it sounds like |
+| Command | Audience | Style |
 |---|---|---|
-| `/eli5` | 5-year-old | Toys, food, animals. ~15 words/sentence. |
+| `/eli5` | 5-year-old (default) | Toys, food, animals. ~15 words/sentence. |
 | `/eli-kid` | 10-year-old | School analogies. Cause-and-effect. Lots of "but why?" |
-| `/eli-teen` | 15-year-old | Gaming, pop culture, social stuff. Sharp but impatient. |
-| `/eli-adult` | Smart non-expert adult | Real-world analogies. No jargon. Assumes life experience, not domain knowledge. |
-| `/eli-expert` | Expert in a *different* field | Bridges your domain to this one. Doctor? Lawyer? Chef? Tell Claude. |
+| `/eli-teen` | 15-year-old | Gaming, pop culture, social stuff. Sharp and impatient. |
+| `/eli-adult` | Smart non-expert adult | Real-world analogies. No jargon. Assumes life experience. |
+| `/eli-expert` | Expert in a *different* field | Bridges your domain to this one. Doctor? Lawyer? Chef? It'll ask. |
 
-Use the command alone to activate, or with a question to get an answer immediately:
-
+Use a command alone or with a question:
 ```
 /eli5
 /eli-teen explain what a race condition is
 /eli-expert I'm a surgeon. What is async/await?
 ```
 
-Switch levels any time — even mid-conversation. Just say the new command.
+### Navigation
+
+| Command | What it does |
+|---|---|
+| `/eli-deeper` | Step one level more technical. Re-explains the last concept at the new level. |
+| `/eli-simpler` | Step one level simpler. Re-explains the last concept at the new level. |
+
+### Utilities
+
+| Command | What it does |
+|---|---|
+| `/eli-status` | Show current mode and level. |
+| `/eli-save` | Export all eli5 explanations from this session to `eli5-notes.md`. |
+| `/eli-quiz` | Test your understanding of the last explanation. |
+| `/eli-doc` | Scan the current codebase and write `ELI5.md` — a plain-language glossary. |
+
+### Deactivate
+
+```
+/eli-off      stop eli5      normal mode      talk normally
+```
 
 ---
 
 ## Or just say it
 
-Don't want a slash command? Any of these work too:
+Slash commands are optional. Any of these activate the default level:
 
 ```
-eli5                      ELI5
-explain like i'm 5        dumb it down
-explain simply            talk to me like a kid
-pretend I'm 5             simplest possible explanation
-i don't get it, explain simply
+eli5          ELI5           explain like i'm 5
+dumb it down  explain simply  talk to me like a kid
+pretend I'm 5               simplest possible explanation
 ```
 
 ---
 
-## Turn it off
+## Auto-activate for a project
 
+Drop a `.eli5rc` file in your project root and eli5-mode activates automatically every session — no command needed:
+
+```bash
+# .eli5rc
+level=eli-adult
+
+# for /eli-expert, add your field:
+# expert_field=medicine
 ```
-stop eli5     normal mode     talk normally     /eli-off
-```
+
+See `examples/eli5rc-example` for all options.
 
 ---
 
-## See the difference
+## See it in action
 
-Same topic. Five levels. Here's OAuth:
+One concept. Five levels.
 
-**`/eli5` — 5-year-old**
-> Imagine you have a house key. OAuth is like making a tiny special key that only opens the mailbox. You give it to the mailman so he can do his job, but he can never get inside your house.
+> **`/eli5` — OAuth**
+> Imagine you have a house key. OAuth is like making a tiny special key that only opens the mailbox. You give it to the mailman, but he can never get inside your house.
 
-**`/eli-kid` — 10-year-old**
-> You know how your parents have a spare key that only opens the front door — not the garage? OAuth works like that for apps. Instead of giving an app your whole password, it gets a tiny special key that only does one thing.
+> **`/eli-kid` — OAuth**
+> You know how your parents have a spare key that only opens the front door? OAuth works like that for apps. The app gets a tiny key that only does one thing — it can't get into everything.
 
-**`/eli-teen` — 15-year-old**
-> You know how you can "Login with Google" on random apps? OAuth is the thing that makes that work. Google gives the app a special pass instead of your actual password — like a backstage wristband. Gets you in. Doesn't mean you own the venue.
+> **`/eli-teen` — OAuth**
+> You know how you can "Login with Google" on apps? OAuth makes that work. Google gives the app a special pass instead of your password — like a backstage wristband. Gets you in. Doesn't mean you own the venue.
 
-**`/eli-adult` — smart non-expert**
+> **`/eli-adult` — OAuth**
 > OAuth lets you grant an app limited access to another service without sharing your password. Like a parking valet key — it parks the car, it can't open the glove box.
 
-**`/eli-expert` — doctor**
+> **`/eli-expert` (doctor) — OAuth**
 > Think of it like a referral letter. Your GP doesn't send the specialist your full chart — they send a referral authorizing exactly what's needed. OAuth is that letter. Scoped, time-limited, doesn't expose everything.
+
+---
+
+## Different analogy? Just ask.
+
+If an analogy doesn't click, say any of these and Claude will generate a completely different one — never reusing one it already gave:
+
+```
+different analogy    another analogy    that didn't help
+try again           give me another one   that one didn't click
+```
 
 ---
 
 ## How it works
 
-eli5-mode is a **behavioral skill** — it changes *how* Claude communicates, not what Claude knows or can help with. The skill loads into Claude's context and overrides its communication defaults for the entire session.
+`eli5-mode` is a **behavioral skill** — it changes *how* Claude communicates, not what it knows. Each level is a registered slash command with its own `SKILL.md`. A `SessionStart` hook auto-activates for projects with `.eli5rc`. All levels share a central rules file so they stay consistent.
 
 Eight rules baked into every level:
 
 1. **Analogy first** — never define, always compare
-2. **Kill jargon** — if a word needs explaining, replace it entirely
+2. **Kill jargon** — replace words that need explaining, don't explain them
 3. **Short sentences** — one idea per sentence
 4. **Stay accurate** — simpler is not the same as wrong
-5. **Concrete over abstract** — food, toys, animals, buildings, not "systems" and "paradigms"
+5. **Concrete over abstract** — food, toys, buildings, not "systems" and "paradigms"
 6. **No condescension** — "simply" and "obviously" are banned
-7. **Persistence** — stays on every response until you turn it off
-8. **Safety first** — warnings for destructive or irreversible actions are always written in plain clear language, no exceptions
+7. **Persistence** — every response until deactivated; drift is a bug
+8. **Safety first** — warnings for destructive/irreversible actions always in plain language
 
 ---
 
@@ -162,21 +176,31 @@ Eight rules baked into every level:
 ```
 claude-eli5/
 ├── skills/
-│   ├── eli5-mode/              ← main skill (default, age 5)
+│   ├── eli5-mode/               default level (age 5)
 │   │   ├── SKILL.md
-│   │   ├── evals/
-│   │   │   └── evals.json      ← 8 test cases with pass/fail assertions
+│   │   ├── evals/evals.json     8 test cases with pass/fail assertions
 │   │   └── references/
-│   │       └── analogy-bank.md ← 30+ ready-to-use analogies
-│   ├── eli-kid/SKILL.md        ← age 10
-│   ├── eli-teen/SKILL.md       ← age 15
-│   ├── eli-adult/SKILL.md      ← smart non-expert
-│   └── eli-expert/SKILL.md     ← expert in adjacent field
-├── install.sh                  ← Mac/Linux install
-├── install.ps1                 ← Windows install
-├── uninstall.sh
-├── uninstall.ps1
-└── update.sh                   ← git pull + reinstall
+│   │       ├── core-rules.md    shared enforcement rules (single source of truth)
+│   │       ├── analogy-bank.md  40+ ready-to-use analogies
+│   │       └── custom-analogies.md  add your own
+│   ├── eli-kid/SKILL.md         age 10
+│   ├── eli-teen/SKILL.md        age 15
+│   ├── eli-adult/SKILL.md       smart non-expert
+│   ├── eli-expert/SKILL.md      expert in adjacent field (with field memory)
+│   ├── eli-off/SKILL.md         deactivate
+│   ├── eli-status/SKILL.md      check current level
+│   ├── eli-deeper/SKILL.md      step one level more technical
+│   ├── eli-simpler/SKILL.md     step one level simpler
+│   ├── eli-save/SKILL.md        export session explanations to file
+│   ├── eli-quiz/SKILL.md        test your understanding
+│   └── eli-doc/SKILL.md         generate ELI5.md for the codebase
+├── hooks/
+│   └── eli5-session-start.sh    auto-activates from .eli5rc on session start
+├── examples/
+│   ├── eli5rc-example           sample .eli5rc config
+│   └── CLAUDE.md                block to add to your project's CLAUDE.md
+├── install.sh / install.ps1
+├── uninstall.sh / uninstall.ps1
+├── update.sh
+└── VERSION
 ```
-
-The analogy bank covers 40+ concepts: APIs, databases, caching, Git, Docker, encryption, DNS, load balancers, recursion, async, threads, microservices, regex, ORMs, WebSockets, message queues, and more.
