@@ -1,6 +1,6 @@
 # eli5-mode
 
-<img width="180" alt="eli5-mode" src="https://github.com/user-attachments/assets/fc455497-a820-428c-85b6-96ea3a2819fc" />
+<img width="200" height="200" alt="claude-eli5" src="https://github.com/user-attachments/assets/7622dfd7-e538-435e-91ac-eef11cf8b30f" />
 
 **A Claude Code skill that makes Claude talk like you're 5.**
 
