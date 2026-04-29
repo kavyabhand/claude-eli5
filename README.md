@@ -1,152 +1,129 @@
 # eli5-mode
 
-<<<<<<< Updated upstream
-<img width="200" height="200" alt="download" src="https://github.com/user-attachments/assets/fc455497-a820-428c-85b6-96ea3a2819fc" />
+<img width="180" alt="eli5-mode" src="https://github.com/user-attachments/assets/fc455497-a820-428c-85b6-96ea3a2819fc" />
 
-<br>
-A Claude Code skill that makes Claude explain everything like you're 5 years old (or whatever age you pick).
-=======
-A Claude Code skill that makes Claude explain everything like you're 5 years old — or whatever age you pick.
->>>>>>> Stashed changes
+**A Claude Code skill that makes Claude talk like you're 5.**
 
-Analogy-first. Zero jargon. Radically simplified but always accurate.
+No jargon. No walls of text. Just analogies, plain words, and explanations that actually stick.
+
+Pick your age. Ask anything. Get it.
 
 ---
 
 ## Install
 
-### Mac / Linux
-
+**Mac / Linux**
 ```bash
 git clone https://github.com/kavyabhand/claude-eli5.git
 cd claude-eli5
-chmod +x install.sh
 ./install.sh
 ```
 
-### Windows (PowerShell)
-
+**Windows (PowerShell)**
 ```powershell
 git clone https://github.com/kavyabhand/claude-eli5.git
 cd claude-eli5
 .\install.ps1
 ```
 
-> If you get a script execution error on Windows, run:
-> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
-> then retry.
+> Windows script blocked? Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` first.
 
-That's it. Start a new Claude Code session — the skill is live.
+Start a new Claude Code session. Done.
+
+---
+
+## Use it
+
+Just say the word — Claude flips into simple mode instantly.
+
+```
+eli5          ELI5          /eli5
+explain like i'm 5          dumb it down
+explain simply              talk to me like a kid
+pretend I'm 5               simplest possible explanation
+```
+
+Turn it off just as easy:
+```
+stop eli5     normal mode     talk normally     /eli-off
+```
+
+---
+
+## Pick your level
+
+| Command | Who it's for |
+|---|---|
+| `/eli5` | 5-year-old. Toys, food, animals. Tiny sentences. |
+| `/eli-kid` | 10-year-old. School stuff, cause-and-effect, "but why?" energy. |
+| `/eli-teen` | 15-year-old. Pop culture, gaming, no patience for boring. |
+| `/eli-adult` | Smart person, zero domain knowledge. Real-world analogies. |
+| `/eli-expert` | Expert in *another* field. Cross-domain bridges, your vocabulary. |
+
+Switch levels any time, mid-conversation.
+
+---
+
+## See it in action
+
+One topic. Five levels. Here's OAuth:
+
+> **5-year-old**
+> Imagine you have a house key. OAuth is like making a tiny special key that only opens the mailbox — you give it to the mailman so he can do his job, but he can never get inside your house.
+
+> **Teen**
+> You know how you can "Login with Google" on apps? OAuth is the thing that makes that work. Google hands the app a special pass instead of your password — like a backstage wristband. Gets you in. Doesn't mean you own the venue.
+
+> **Adult**
+> OAuth lets you grant an app limited access to another service without handing over your password. Like a valet key — it parks the car, it can't open the glove box.
+
+> **Expert (doctor)**
+> Think referral letter. Your GP doesn't send the specialist your full chart — they send a referral authorizing exactly what's needed. OAuth is that letter. Scoped, time-limited, doesn't expose the whole record.
+
+---
+
+## How it works
+
+`eli5-mode` is a **behavioral skill** — it changes *how* Claude talks, not what Claude knows. Every response becomes analogy-first, jargon-free, and short. It stays on until you say otherwise.
+
+Eight rules baked in:
+
+- **Analogy first** — never define, always compare
+- **Kill jargon** — replace words that need explaining, don't explain them
+- **Short sentences** — one idea, one sentence
+- **Stay accurate** — simpler is not the same as wrong
+- **Concrete over abstract** — food, toys, animals, buildings, not "systems" and "frameworks"
+- **No condescension** — "simply" and "obviously" are banned
+- **Persistence** — stays on every response until you turn it off
+- **Safety first** — destructive/irreversible action warnings are always written clearly, no exceptions
 
 ---
 
 ## Uninstall
 
-### Mac / Linux
-
+**Mac / Linux**
 ```bash
 ./uninstall.sh
 ```
 
-### Windows (PowerShell)
-
+**Windows**
 ```powershell
 .\uninstall.ps1
 ```
 
 ---
 
-## What it does
-
-`eli5-mode` is a **behavioral skill** — it changes how Claude communicates, not what it can help with. Once activated, every response uses physical analogies, short sentences, and plain words. It stays on until you turn it off.
-
----
-
-## Usage
-
-Say any of these to activate in Claude Code:
-
-```
-eli5
-ELI5
-/eli5
-explain like i'm 5
-dumb it down
-explain simply
-talk to me like a kid
-pretend I'm 5
-simplest possible explanation
-```
-
-To deactivate:
-
-```
-stop eli5
-normal mode
-talk normally
-/eli-off
-```
-
----
-
-## Levels
-
-Switch levels any time — even mid-session.
-
-| Command | Audience | Style |
-|---|---|---|
-| `/eli5` | 5-year-old (default) | Toys, food, animals. Max ~15 words/sentence. |
-| `/eli-kid` | 10-year-old | School analogies, cause-effect, curious-kid energy. |
-| `/eli-teen` | 15-year-old | Pop culture refs, gaming, social analogies. |
-| `/eli-adult` | Smart non-expert | Real-world analogies, no jargon, assumes life experience. |
-| `/eli-expert` | Expert in adjacent field | Cross-domain bridges using their own vocabulary. |
-
----
-
-## Examples
-
-**eli5 — OAuth:**
-> Imagine you have a house key. OAuth is like making a tiny special key that only opens the mailbox. You give it to the mailman so he can do his job, but he can never get inside your house.
-
-**eli-teen — OAuth:**
-> You know how you can "Login with Google" on apps? OAuth is the thing that makes that work. Instead of giving the app your Google password, Google hands them a special pass — like a backstage wristband that gets you in but doesn't mean you own the venue.
-
-**eli-adult — OAuth:**
-> OAuth lets you grant an app limited access to another service without sharing your password. Like giving a parking valet a special valet key — works for parking, can't open the glove box.
-
-**eli-expert (doctor) — OAuth:**
-> Think of it like a referral letter. Instead of handing a specialist your full chart, your GP sends a referral that authorizes exactly what they need to see. OAuth is that letter — scoped, time-limited, doesn't expose everything.
-
----
-
-## Core rules
-
-1. **Analogy first** — never define, always compare.
-2. **Kill jargon** — if a word needs explaining, replace it.
-3. **Short sentences** — one idea per sentence.
-4. **Stay accurate** — simplification is not the same as wrong.
-5. **Concrete over abstract** — food, toys, animals, buildings, weather.
-6. **No condescension** — never say "simply", "obviously", "just", "easy".
-7. **Persistence** — active every response until explicitly turned off.
-8. **Safety exception** — warnings for destructive/irreversible actions are always written clearly first.
-
----
-
-## Files
+## What's inside
 
 ```
 eli5-mode/
-├── SKILL.md                  # Skill instructions + core rules
+├── SKILL.md                   # The skill brain — rules, levels, examples
 ├── evals/
-│   └── evals.json            # 8 test cases with verifiable assertions
+│   └── evals.json             # 8 test cases with verifiable pass/fail checks
 └── references/
-    └── analogy-bank.md       # 30+ ready-to-use analogies for common tech concepts
-install.sh                    # Mac/Linux installer
-install.ps1                   # Windows PowerShell installer
-uninstall.sh                  # Mac/Linux uninstaller
-uninstall.ps1                 # Windows PowerShell uninstaller
+    └── analogy-bank.md        # 30+ ready-to-use analogies for common tech
+install.sh / install.ps1       # One-command install
+uninstall.sh / uninstall.ps1   # One-command remove
 ```
 
-## Analogy bank coverage
-
-APIs · REST · WebSockets · HTTP/HTTPS · DNS · CDNs · load balancers · firewalls · databases · SQL · indexes · caching · memory/RAM · disk storage · data compression · functions · variables · loops · conditionals · arrays · objects · classes · inheritance · recursion · bugs · dependencies · servers · cloud · Docker · virtual machines · microservices · monoliths · encryption · SSL · auth tokens · middleware · proxies · Git · branches · merging · compilers · interpreters · async/sync · threads · deadlocks · race conditions · design patterns · regex · ORMs · webhooks · message queues
+The analogy bank covers: APIs, databases, caching, Git, Docker, encryption, DNS, load balancers, recursion, async, threads, microservices, regex, ORMs, webhooks, and a lot more.
