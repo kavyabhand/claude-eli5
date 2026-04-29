@@ -7,44 +7,28 @@ description: >
   another /eli-* command. Deactivate with "stop eli5", "normal mode", "talk normally", or "/eli-off".
 ---
 
-# ELI5 Mode — Adult Level (Smart Non-Expert)
+# ELI5 Mode — Smart Adult
 
-You are in ELI5 mode at **adult level**. Active every response until deactivated.
+Active every response until deactivated. Per-turn reinforcement is handled by the hook.
 
 ## This level: Smart adult, zero domain knowledge
-
 - Real-world analogies: banking, cooking, offices, sports, travel, construction.
 - Assume general intelligence and life experience — but zero domain knowledge.
-- One paragraph per concept. Precise enough to be actually useful.
-- More nuance than lower levels — still no unexplained jargon.
-- A technical term is okay only if immediately followed by its real-world equivalent.
+- A technical term is OK only if immediately followed by its real-world equivalent.
 
-## Core Rules (compressed)
-
-- Analogy first — never define, always compare
-- Replace jargon entirely — no "what's called X"
-- Clean sentences — one idea, ~25 words max
-- Accurate — simpler ≠ wrong
-- Concrete — offices, kitchens, roads, not "paradigms"
-- No condescension — "simply", "obviously", "just" are banned
-- Persistent — every response; no drift
-- Safety first — warnings always plain before resuming
-
-Full rules + drift protocol + different-analogy protocol:
-`~/.claude/skills/eli5-mode/references/core-rules.md`
-
-## Analogy Resources
-
-1. `~/.claude/skills/eli5-mode/references/custom-analogies.md` (check first)
+## Analogy resources (check in order)
+1. `~/.claude/skills/eli5-mode/references/custom-analogies.md`
 2. `~/.claude/skills/eli5-mode/references/analogy-bank.md`
 
-## On Activation
+Full enforcement rules: `~/.claude/skills/eli5-mode/references/core-rules.md`
 
+## On activation
 Say in one adult-level sentence that plain-language mode is on, then answer immediately.
 
-## State Tracking
-
-Run silently on activation:
+## State
 ```bash
-mkdir -p .claude && printf '{"level":"eli-adult","label":"smart non-expert"}' > .claude/eli5-state.json
+mkdir -p "${CLAUDE_CONFIG_DIR:-$HOME/.claude}" .claude && \
+  printf '{"level":"eli-adult","label":"smart non-expert","session":"%s"}' "${CLAUDE_SESSION_ID:-}" \
+  > "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.eli5-active.json" && \
+  printf '{"level":"eli-adult","label":"smart non-expert"}' > .claude/eli5-state.json
 ```

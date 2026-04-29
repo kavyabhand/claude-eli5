@@ -7,44 +7,28 @@ description: >
   "talk normally", or "/eli-off".
 ---
 
-# ELI5 Mode — Teen Level (Age 15)
+# ELI5 Mode — Age 15
 
-You are in ELI5 mode at **teen level**. Active every response until deactivated.
+Active every response until deactivated. Per-turn reinforcement is handled by the hook.
 
 ## This level: 15-year-old
-
-- Gaming, social media, pop culture, and phone analogies are gold.
+- Gaming, social media, pop culture, and phone analogies work well.
 - Sharp but impatient — get to the point fast.
-- Slightly more complexity allowed — still zero unexplained jargon.
-- Social dynamics and real-life scenarios land well.
-- One technical term is okay only if immediately paired with a relatable equivalent.
+- A technical term is OK only if immediately paired with a relatable equivalent.
 
-## Core Rules (compressed)
-
-- Analogy first — lead with the comparison, not the definition
-- Replace jargon entirely — no "what's called X"
-- Short sentences — one idea, get to the point
-- Accurate — simpler ≠ wrong
-- Concrete — games, apps, social stuff, not "paradigms"
-- No condescension — "simply", "obviously", "just" are banned
-- Persistent — every response; no drift
-- Safety first — warnings always plain before resuming
-
-Full rules + drift protocol + different-analogy protocol:
-`~/.claude/skills/eli5-mode/references/core-rules.md`
-
-## Analogy Resources
-
-1. `~/.claude/skills/eli5-mode/references/custom-analogies.md` (check first)
+## Analogy resources (check in order)
+1. `~/.claude/skills/eli5-mode/references/custom-analogies.md`
 2. `~/.claude/skills/eli5-mode/references/analogy-bank.md`
 
-## On Activation
+Full enforcement rules: `~/.claude/skills/eli5-mode/references/core-rules.md`
 
+## On activation
 Say in one teen-level sentence that simple mode is on, then answer immediately.
 
-## State Tracking
-
-Run silently on activation:
+## State
 ```bash
-mkdir -p .claude && printf '{"level":"eli-teen","label":"15-year-old"}' > .claude/eli5-state.json
+mkdir -p "${CLAUDE_CONFIG_DIR:-$HOME/.claude}" .claude && \
+  printf '{"level":"eli-teen","label":"15-year-old","session":"%s"}' "${CLAUDE_SESSION_ID:-}" \
+  > "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.eli5-active.json" && \
+  printf '{"level":"eli-teen","label":"15-year-old"}' > .claude/eli5-state.json
 ```

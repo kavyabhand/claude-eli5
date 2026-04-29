@@ -22,24 +22,35 @@ foreach ($skill in $Skills) {
     }
 }
 
-$hook = Join-Path $ClaudeDir 'hooks\eli5-session-start.sh'
-if (Test-Path $hook) {
-    Remove-Item -Force $hook
-    Write-Ok "Removed hook"
+foreach ($hookFile in @('eli5-session-start.sh','eli5-per-turn.js','eli5-statusline.sh')) {
+    $hook = Join-Path $ClaudeDir "hooks\$hookFile"
+    if (Test-Path $hook) {
+        Remove-Item -Force $hook
+        Write-Ok "Removed $hookFile"
+    }
 }
 
 $settingsPath = Join-Path $ClaudeDir 'settings.json'
 if ((Test-Path $settingsPath) -and (Get-Command node -ErrorAction SilentlyContinue)) {
+    $sp = $settingsPath -replace '\\','\\\\'
     $nodeScript = @"
 const fs = require('fs');
-const sp = '$($settingsPath -replace '\\','\\\\')';
+const sp = '$sp';
 let s = {};
 try { s = JSON.parse(fs.readFileSync(sp,'utf8')); } catch { process.exit(0); }
-if (!s.hooks?.SessionStart) process.exit(0);
-s.hooks.SessionStart = s.hooks.SessionStart.filter(
-  h => !h.hooks?.some(hh => hh.command?.includes('eli5-session-start'))
-);
-if (s.hooks.SessionStart.length === 0) delete s.hooks.SessionStart;
+
+if (s.hooks?.SessionStart) {
+  s.hooks.SessionStart = s.hooks.SessionStart.filter(
+    h => !h.hooks?.some(hh => hh.command?.includes('eli5-session-start')));
+  if (s.hooks.SessionStart.length === 0) delete s.hooks.SessionStart;
+}
+if (s.hooks?.UserPromptSubmit) {
+  s.hooks.UserPromptSubmit = s.hooks.UserPromptSubmit.filter(
+    h => !h.hooks?.some(hh => hh.command?.includes('eli5-per-turn')));
+  if (s.hooks.UserPromptSubmit.length === 0) delete s.hooks.UserPromptSubmit;
+}
+if (s.statusLine?.command?.includes('eli5-statusline')) delete s.statusLine;
+if (Object.keys(s.hooks || {}).length === 0) delete s.hooks;
 fs.writeFileSync(sp, JSON.stringify(s,null,2));
 "@
     node -e $nodeScript 2>$null

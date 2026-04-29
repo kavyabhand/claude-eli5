@@ -41,42 +41,83 @@ for skill in "${SKILLS[@]}"; do
   success "${skill}"
 done
 
-# ── Hook ──────────────────────────────────────────────────────────────────────
-header "  Installing SessionStart hook..."
+# ── Hooks ─────────────────────────────────────────────────────────────────────
+header "  Installing hooks..."
 mkdir -p "${HOOKS_DIR}"
 
-HOOK_SRC="${REPO_DIR}/hooks/eli5-session-start.sh"
-HOOK_DEST="${HOOKS_DIR}/eli5-session-start.sh"
+SESSION_HOOK_SRC="${REPO_DIR}/hooks/eli5-session-start.sh"
+SESSION_HOOK_DEST="${HOOKS_DIR}/eli5-session-start.sh"
+PER_TURN_SRC="${REPO_DIR}/hooks/eli5-per-turn.js"
+PER_TURN_DEST="${HOOKS_DIR}/eli5-per-turn.js"
+STATUSLINE_SRC="${REPO_DIR}/hooks/eli5-statusline.sh"
+STATUSLINE_DEST="${HOOKS_DIR}/eli5-statusline.sh"
 
-cp "${HOOK_SRC}" "${HOOK_DEST}"
-chmod +x "${HOOK_DEST}"
-success "Hook → ${HOOK_DEST}"
+cp "${SESSION_HOOK_SRC}" "${SESSION_HOOK_DEST}" && chmod +x "${SESSION_HOOK_DEST}"
+success "SessionStart  → ${SESSION_HOOK_DEST}"
 
-# Register hook in settings.json
+cp "${PER_TURN_SRC}" "${PER_TURN_DEST}"
+success "UserPromptSubmit → ${PER_TURN_DEST}"
+
+cp "${STATUSLINE_SRC}" "${STATUSLINE_DEST}" && chmod +x "${STATUSLINE_DEST}"
+success "Statusline    → ${STATUSLINE_DEST}"
+
+# Register hooks in settings.json
 SETTINGS="${CLAUDE_DIR}/settings.json"
 if [ ! -f "${SETTINGS}" ]; then
   echo '{}' > "${SETTINGS}"
 fi
 
 if command -v node >/dev/null 2>&1; then
-  node - "${SETTINGS}" "${HOOK_DEST}" <<'EOF'
+  node - "${SETTINGS}" "${SESSION_HOOK_DEST}" "${PER_TURN_DEST}" "${STATUSLINE_DEST}" <<'EOF'
 const fs = require('fs');
-const [,, settingsPath, hookPath] = process.argv;
+const [,, sp, sessionHook, perTurnHook, statuslineHook] = process.argv;
 let s = {};
-try { s = JSON.parse(fs.readFileSync(settingsPath, 'utf8')); } catch {}
+try { s = JSON.parse(fs.readFileSync(sp, 'utf8')); } catch {}
 s.hooks = s.hooks || {};
+
+// SessionStart
 s.hooks.SessionStart = s.hooks.SessionStart || [];
-const cmd = `bash "${hookPath}"`;
-const already = s.hooks.SessionStart.some(h => h.hooks?.some(hh => hh.command === cmd));
-if (!already) {
-  s.hooks.SessionStart.push({ hooks: [{ type: 'command', command: cmd }] });
+const sessionCmd = `bash "${sessionHook}"`;
+if (!s.hooks.SessionStart.some(h => h.hooks?.some(hh => hh.command === sessionCmd))) {
+  s.hooks.SessionStart.push({ hooks: [{ type: 'command', command: sessionCmd }] });
 }
-fs.writeFileSync(settingsPath, JSON.stringify(s, null, 2));
-console.log('ok');
+
+// UserPromptSubmit (per-turn reinforcement)
+s.hooks.UserPromptSubmit = s.hooks.UserPromptSubmit || [];
+const perTurnCmd = `node "${perTurnHook}"`;
+if (!s.hooks.UserPromptSubmit.some(h => h.hooks?.some(hh => hh.command === perTurnCmd))) {
+  s.hooks.UserPromptSubmit.push({ hooks: [{ type: 'command', command: perTurnCmd }] });
+}
+
+// Statusline — only set if not already configured
+if (!s.statusLine) {
+  s.statusLine = { type: 'command', command: `bash "${statuslineHook}"` };
+  console.log('statusline_set');
+} else {
+  console.log('statusline_skip');
+}
+
+fs.writeFileSync(sp, JSON.stringify(s, null, 2));
 EOF
-  success "Registered in settings.json"
+  if [ $? -eq 0 ]; then
+    success "Registered SessionStart + UserPromptSubmit in settings.json"
+    # Check if statusline was set or skipped (last stdout line)
+    STATUSLINE_RESULT=$(node - "${SETTINGS}" "${STATUSLINE_DEST}" <<'JSEOF'
+const fs = require('fs');
+const [,, sp, sh] = process.argv;
+const s = JSON.parse(fs.readFileSync(sp,'utf8'));
+console.log(s.statusLine?.command?.includes('eli5-statusline') ? 'active' : 'other');
+JSEOF
+)
+    if [ "${STATUSLINE_RESULT}" = "active" ]; then
+      success "Statusline badge registered [ELI5] / [ELI5:TEEN] etc."
+    else
+      warn "Statusline already configured — add manually to settings.json if desired:"
+      warn "  \"statusLine\": { \"type\": \"command\", \"command\": \"bash \\\"${STATUSLINE_DEST}\\\"\" }"
+    fi
+  fi
 else
-  warn "Node.js not found — add the hook to settings.json manually (see examples/CLAUDE.md)"
+  warn "Node.js not found — add hooks to settings.json manually (see examples/CLAUDE.md)"
 fi
 
 # ── CLAUDE.md patch ───────────────────────────────────────────────────────────

@@ -44,40 +44,62 @@ foreach ($skill in $Skills) {
     Write-Ok $skill
 }
 
-# ── Hook ──────────────────────────────────────────────────────────────────────
+# ── Hooks ─────────────────────────────────────────────────────────────────────
 if (-not $NoHooks) {
-    Write-Host "`n  Installing SessionStart hook..."
+    Write-Host "`n  Installing hooks..."
     if (-not (Test-Path $HooksDir)) { New-Item -ItemType Directory -Path $HooksDir -Force | Out-Null }
 
-    $hookSrc  = Join-Path $ScriptDir 'hooks\eli5-session-start.sh'
-    $hookDest = Join-Path $HooksDir  'eli5-session-start.sh'
-    Copy-Item $hookSrc $hookDest -Force
-    Write-Ok "Hook → $hookDest"
+    $sessionHookSrc  = Join-Path $ScriptDir 'hooks\eli5-session-start.sh'
+    $sessionHookDest = Join-Path $HooksDir  'eli5-session-start.sh'
+    $perTurnSrc      = Join-Path $ScriptDir 'hooks\eli5-per-turn.js'
+    $perTurnDest     = Join-Path $HooksDir  'eli5-per-turn.js'
+    $statuslineSrc   = Join-Path $ScriptDir 'hooks\eli5-statusline.sh'
+    $statuslineDest  = Join-Path $HooksDir  'eli5-statusline.sh'
 
-    # Register in settings.json via Node if available
+    Copy-Item $sessionHookSrc  $sessionHookDest  -Force; Write-Ok "SessionStart     → $sessionHookDest"
+    Copy-Item $perTurnSrc      $perTurnDest      -Force; Write-Ok "UserPromptSubmit → $perTurnDest"
+    Copy-Item $statuslineSrc   $statuslineDest   -Force; Write-Ok "Statusline       → $statuslineDest"
+
     $settingsPath = Join-Path $ClaudeDir 'settings.json'
     if (-not (Test-Path $settingsPath)) { '{}' | Set-Content $settingsPath }
 
     if (Get-Command node -ErrorAction SilentlyContinue) {
+        $sp  = $settingsPath  -replace '\\','\\\\'
+        $shp = $sessionHookDest -replace '\\','\\\\'
+        $ptp = $perTurnDest     -replace '\\','\\\\'
+        $slp = $statuslineDest  -replace '\\','\\\\'
         $nodeScript = @"
 const fs = require('fs');
-const sp = '$($settingsPath -replace '\\','\\\\')';
-const hp = '$($hookDest -replace '\\','\\\\')';
+const sp = '$sp', shp = '$shp', ptp = '$ptp', slp = '$slp';
 let s = {};
 try { s = JSON.parse(fs.readFileSync(sp,'utf8')); } catch {}
 s.hooks = s.hooks || {};
+
 s.hooks.SessionStart = s.hooks.SessionStart || [];
-const cmd = 'bash "' + hp + '"';
-const already = s.hooks.SessionStart.some(h => h.hooks?.some(hh => hh.command === cmd));
-if (!already) s.hooks.SessionStart.push({hooks:[{type:'command',command:cmd}]});
+const sCmd = 'bash "' + shp + '"';
+if (!s.hooks.SessionStart.some(h => h.hooks?.some(hh => hh.command === sCmd)))
+  s.hooks.SessionStart.push({hooks:[{type:'command',command:sCmd}]});
+
+s.hooks.UserPromptSubmit = s.hooks.UserPromptSubmit || [];
+const ptCmd = 'node "' + ptp + '"';
+if (!s.hooks.UserPromptSubmit.some(h => h.hooks?.some(hh => hh.command === ptCmd)))
+  s.hooks.UserPromptSubmit.push({hooks:[{type:'command',command:ptCmd}]});
+
+const statuslineSet = !s.statusLine;
+if (statuslineSet) s.statusLine = {type:'command',command:'bash "' + slp + '"'};
 fs.writeFileSync(sp, JSON.stringify(s,null,2));
-console.log('ok');
+console.log(statuslineSet ? 'statusline_set' : 'statusline_skip');
 "@
         $result = node -e $nodeScript 2>$null
-        if ($result -eq 'ok') { Write-Ok "Registered in settings.json" }
-        else { Write-Warn "Could not auto-register hook — add manually (see examples/CLAUDE.md)" }
+        Write-Ok "Registered SessionStart + UserPromptSubmit in settings.json"
+        if ($result -eq 'statusline_set') {
+            Write-Ok "Statusline badge registered [ELI5] / [ELI5:TEEN] etc."
+        } else {
+            Write-Warn "Statusline already configured — add manually to settings.json if desired:"
+            Write-Warn "  `"statusLine`": { `"type`": `"command`", `"command`": `"bash \`"$statuslineDest\`"`" }"
+        }
     } else {
-        Write-Warn "Node.js not found — add hook to settings.json manually (see examples/CLAUDE.md)"
+        Write-Warn "Node.js not found — add hooks to settings.json manually (see examples/CLAUDE.md)"
     }
 }
 

@@ -22,14 +22,16 @@ for skill in "${SKILLS[@]}"; do
   fi
 done
 
-# Remove hook
-HOOK="${HOOKS_DIR}/eli5-session-start.sh"
-if [ -f "${HOOK}" ]; then
-  rm -f "${HOOK}"
-  success "Removed hook"
-fi
+# Remove hooks
+for hook_file in eli5-session-start.sh eli5-per-turn.js eli5-statusline.sh; do
+  HOOK="${HOOKS_DIR}/${hook_file}"
+  if [ -f "${HOOK}" ]; then
+    rm -f "${HOOK}"
+    success "Removed ${hook_file}"
+  fi
+done
 
-# Remove hook from settings.json
+# Remove hooks + statusline from settings.json
 SETTINGS="${CLAUDE_DIR}/settings.json"
 if [ -f "${SETTINGS}" ] && command -v node >/dev/null 2>&1; then
   node - "${SETTINGS}" <<'EOF'
@@ -37,11 +39,26 @@ const fs = require('fs');
 const [,, sp] = process.argv;
 let s = {};
 try { s = JSON.parse(fs.readFileSync(sp, 'utf8')); } catch { process.exit(0); }
-if (!s.hooks?.SessionStart) process.exit(0);
-s.hooks.SessionStart = s.hooks.SessionStart.filter(
-  h => !h.hooks?.some(hh => hh.command?.includes('eli5-session-start'))
-);
-if (s.hooks.SessionStart.length === 0) delete s.hooks.SessionStart;
+
+if (s.hooks?.SessionStart) {
+  s.hooks.SessionStart = s.hooks.SessionStart.filter(
+    h => !h.hooks?.some(hh => hh.command?.includes('eli5-session-start'))
+  );
+  if (s.hooks.SessionStart.length === 0) delete s.hooks.SessionStart;
+}
+
+if (s.hooks?.UserPromptSubmit) {
+  s.hooks.UserPromptSubmit = s.hooks.UserPromptSubmit.filter(
+    h => !h.hooks?.some(hh => hh.command?.includes('eli5-per-turn'))
+  );
+  if (s.hooks.UserPromptSubmit.length === 0) delete s.hooks.UserPromptSubmit;
+}
+
+if (s.statusLine?.command?.includes('eli5-statusline')) {
+  delete s.statusLine;
+}
+
+if (Object.keys(s.hooks || {}).length === 0) delete s.hooks;
 fs.writeFileSync(sp, JSON.stringify(s, null, 2));
 EOF
   success "Removed from settings.json"

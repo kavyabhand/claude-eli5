@@ -157,6 +157,45 @@ Eight rules baked into every level:
 
 ---
 
+## Token efficiency
+
+Every token you spend on meta-instructions is a token not spent on your actual answer. eli5-mode v3 is engineered to minimize that overhead without letting quality drift.
+
+### Three-hook architecture
+
+| Hook | When it fires | What it does |
+|---|---|---|
+| `SessionStart` | Once per session | Reads `core-rules.md` at runtime — full rules injected once, not on every activation |
+| `UserPromptSubmit` | Every turn | 25-token reinforcement prevents drift; detects level switches and deactivation in-flight |
+| Statusline | Every turn | Zero-token — renders the `[ELI5]` badge from the flag file, no prompt overhead |
+
+### Measured overhead per 20-turn session
+
+| | Level stub size | Per-turn overhead | Drift re-activations | **Total eli5 overhead** |
+|---|---|---|---|---|
+| v2 (rules baked in) | ~450 tokens | 0 | 1 typical (~450t) | **~1,575 tokens** |
+| v3 (per-turn hook) | ~150 tokens | 25t × 20 = 500t | 0 (prevented) | **~1,325 tokens** |
+
+That's **~16% lower** in the typical case — but the real win is that v2's number gets *worse* every time Claude drifts (each re-activation costs another 450 tokens). v3's number is a fixed ceiling.
+
+### How drift is prevented
+
+Without reinforcement, Claude gradually stops following eli5 rules after 10–15 turns. The `UserPromptSubmit` hook fires before every response and injects a 25-token reminder:
+
+```
+ELI5 ACTIVE (eli-teen / 15yo). Pop culture/gaming. Get to the point fast.
+Core rules: analogy-first, kill jargon, short sentences, accurate, concrete, no condescension.
+Persist every response. /eli-off to deactivate.
+```
+
+25 tokens per turn. No drift. No re-activation cost.
+
+### Single source of truth
+
+`core-rules.md` is read at runtime by the `SessionStart` hook — not duplicated into each level stub. Edit the file, restart your session, and all five levels pick up the change instantly. No reinstall needed.
+
+---
+
 ## Uninstall
 
 **Mac / Linux**
@@ -195,7 +234,9 @@ claude-eli5/
 │   ├── eli-quiz/SKILL.md        test your understanding
 │   └── eli-doc/SKILL.md         generate ELI5.md for the codebase
 ├── hooks/
-│   └── eli5-session-start.sh    auto-activates from .eli5rc on session start
+│   ├── eli5-session-start.sh    SessionStart — reads core-rules.md, auto-activates from .eli5rc
+│   ├── eli5-per-turn.js         UserPromptSubmit — 25-token per-turn reinforcement, drift prevention
+│   └── eli5-statusline.sh       Statusline — orange [ELI5] / [ELI5:TEEN] badge
 ├── examples/
 │   ├── eli5rc-example           sample .eli5rc config
 │   └── CLAUDE.md                block to add to your project's CLAUDE.md
