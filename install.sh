@@ -82,16 +82,29 @@ fi
 # ── CLAUDE.md patch ───────────────────────────────────────────────────────────
 header "  Patching ~/.claude/CLAUDE.md..."
 GLOBAL_MD="${CLAUDE_DIR}/CLAUDE.md"
-MARKER="## eli5-mode"
+touch "${GLOBAL_MD}"
 
-if grep -q "${MARKER}" "${GLOBAL_MD}" 2>/dev/null; then
-  warn "eli5-mode block already present in CLAUDE.md — skipping"
+_append_block() {
+  { echo ""; cat "${REPO_DIR}/examples/CLAUDE.md"; echo ""; } >> "${GLOBAL_MD}"
+}
+
+if grep -q "<!-- eli5-mode:end -->" "${GLOBAL_MD}" 2>/dev/null; then
+  # New-style versioned block exists — replace it
+  awk '/^<!-- eli5-mode:start -->/{skip=1; next} /^<!-- eli5-mode:end -->/{skip=0; next} !skip{print}' \
+    "${GLOBAL_MD}" > "${GLOBAL_MD}.tmp" && mv "${GLOBAL_MD}.tmp" "${GLOBAL_MD}"
+  _append_block
+  success "Updated CLAUDE.md block"
+elif grep -q "# eli5-mode: auto-activation" "${GLOBAL_MD}" 2>/dev/null; then
+  # Old-style block (pre-v2) — find its start line and truncate, then append new
+  OLD_LINE=$(grep -n "# eli5-mode: auto-activation" "${GLOBAL_MD}" | head -1 | cut -d: -f1)
+  TRIM_TO=$(( OLD_LINE - 2 ))
+  [ "${TRIM_TO}" -lt 0 ] && TRIM_TO=0
+  head -n "${TRIM_TO}" "${GLOBAL_MD}" > "${GLOBAL_MD}.tmp" && mv "${GLOBAL_MD}.tmp" "${GLOBAL_MD}"
+  _append_block
+  success "Upgraded CLAUDE.md block (old → new)"
 else
-  {
-    echo ""
-    cat "${REPO_DIR}/examples/CLAUDE.md"
-    echo ""
-  } >> "${GLOBAL_MD}"
+  # Fresh install — append
+  _append_block
   success "Patched CLAUDE.md"
 fi
 

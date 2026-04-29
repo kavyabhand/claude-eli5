@@ -1,8 +1,4 @@
-# eli5-mode: auto-activation
-
-# Copy this block into your project's CLAUDE.md or ~/.claude/CLAUDE.md
-# to give Claude awareness of eli5-mode auto-activation.
-
+<!-- eli5-mode:start -->
 ## eli5-mode
 
 If a `.eli5rc` file is present in the current project directory:
@@ -22,3 +18,4 @@ Available commands:
 /eli-save                                         — export session explanations to eli5-notes.md
 /eli-quiz                                         — test understanding of last explanation
 /eli-doc                                          — generate ELI5.md glossary for this codebase
+<!-- eli5-mode:end -->

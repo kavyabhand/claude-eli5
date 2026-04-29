@@ -83,15 +83,29 @@ console.log('ok');
 
 # ── CLAUDE.md patch ───────────────────────────────────────────────────────────
 Write-Host "`n  Patching ~/.claude/CLAUDE.md..."
-$globalMd   = Join-Path $ClaudeDir 'CLAUDE.md'
-$exampleMd  = Join-Path $ScriptDir 'examples\CLAUDE.md'
-$marker     = '## eli5-mode'
+$globalMd  = Join-Path $ClaudeDir 'CLAUDE.md'
+$exampleMd = Join-Path $ScriptDir 'examples\CLAUDE.md'
+$newBlock  = "`n" + (Get-Content $exampleMd -Raw) + "`n"
 
-if ((Test-Path $globalMd) -and (Select-String -Path $globalMd -Pattern $marker -Quiet)) {
-    Write-Warn "eli5-mode block already present in CLAUDE.md — skipping"
+if (-not (Test-Path $globalMd)) { '' | Set-Content $globalMd }
+$existing = Get-Content $globalMd -Raw
+
+if ($existing -match '(?s)<!-- eli5-mode:start -->.*?<!-- eli5-mode:end -->') {
+    # New-style versioned block — replace it
+    $updated = $existing -replace '(?s)\n?<!-- eli5-mode:start -->.*?<!-- eli5-mode:end -->\n?', ''
+    Set-Content $globalMd ($updated.TrimEnd())
+    Add-Content $globalMd $newBlock
+    Write-Ok "Updated CLAUDE.md block"
+} elseif ($existing -match '# eli5-mode: auto-activation') {
+    # Old-style block (pre-v2) — remove old block and append new
+    $lines    = Get-Content $globalMd
+    $oldLine  = ($lines | Select-String '# eli5-mode: auto-activation' | Select-Object -First 1).LineNumber
+    $trimTo   = [Math]::Max(0, $oldLine - 3)
+    $lines[0..($trimTo)] | Set-Content $globalMd
+    Add-Content $globalMd $newBlock
+    Write-Ok "Upgraded CLAUDE.md block (old -> new)"
 } else {
-    $content = "`n" + (Get-Content $exampleMd -Raw) + "`n"
-    Add-Content -Path $globalMd -Value $content
+    Add-Content $globalMd $newBlock
     Write-Ok "Patched CLAUDE.md"
 }
 
