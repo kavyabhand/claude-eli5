@@ -4,16 +4,17 @@ param()
 
 $ErrorActionPreference = 'Stop'
 
-$SkillName  = 'eli5-mode'
-$SkillsDir  = Join-Path $env:USERPROFILE '.claude\skills'
-$Dest       = Join-Path $SkillsDir $SkillName
-$ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Source     = Join-Path $ScriptDir $SkillName
+$Skills    = @('eli5-mode', 'eli-kid', 'eli-teen', 'eli-adult', 'eli-expert')
+$SkillsDir = Join-Path $env:USERPROFILE '.claude\skills'
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-Write-Host "Installing $SkillName..."
+Write-Host ""
+Write-Host "  eli5-mode installer"
+Write-Host "  -------------------"
+Write-Host ""
 
-if (-not (Test-Path $Source -PathType Container)) {
-    Write-Error "Skill directory not found at: $Source`nRun this script from the root of the cloned repository."
+if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
+    Write-Error "claude not found. Install Claude Code first: https://claude.ai/code"
     exit 1
 }
 
@@ -21,13 +22,34 @@ if (-not (Test-Path $SkillsDir)) {
     New-Item -ItemType Directory -Path $SkillsDir -Force | Out-Null
 }
 
-if (Test-Path $Dest) {
-    Write-Host "Existing install found — replacing it."
-    Remove-Item -Recurse -Force $Dest
+foreach ($skill in $Skills) {
+    $src  = Join-Path $ScriptDir "skills\$skill"
+    $dest = Join-Path $SkillsDir $skill
+
+    if (-not (Test-Path $src -PathType Container)) {
+        Write-Host "  ! Skill not found at ${src} — skipping." -ForegroundColor Yellow
+        continue
+    }
+
+    if (Test-Path $dest) {
+        Write-Host "  → Updating ${skill}..." -ForegroundColor Cyan
+        Remove-Item -Recurse -Force $dest
+    } else {
+        Write-Host "  → Installing ${skill}..." -ForegroundColor Cyan
+    }
+
+    Copy-Item -Recurse $src $dest
+    Write-Host "  ✓ ${skill} → ${dest}" -ForegroundColor Green
 }
 
-Copy-Item -Recurse $Source $Dest
-
-Write-Host "Done. $SkillName installed to $Dest"
 Write-Host ""
-Write-Host "Start a new Claude Code session and say 'eli5' to activate."
+Write-Host "  All done. Start a new Claude Code session and try:"
+Write-Host ""
+Write-Host "    /eli5          -> 5-year-old level (default)"
+Write-Host "    /eli-kid       -> 10-year-old"
+Write-Host "    /eli-teen      -> 15-year-old"
+Write-Host "    /eli-adult     -> smart non-expert"
+Write-Host "    /eli-expert    -> expert in adjacent field"
+Write-Host ""
+Write-Host "  Or just say: eli5, dumb it down, explain like i'm 5"
+Write-Host ""

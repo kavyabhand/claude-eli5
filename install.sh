@@ -1,29 +1,54 @@
 #!/usr/bin/env bash
 set -e
 
-SKILL_NAME="eli5-mode"
+SKILLS=(eli5-mode eli-kid eli-teen eli-adult eli-expert)
 SKILLS_DIR="${HOME}/.claude/skills"
-DEST="${SKILLS_DIR}/${SKILL_NAME}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE="${SCRIPT_DIR}/${SKILL_NAME}"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "Installing ${SKILL_NAME}..."
+# ── Colors ────────────────────────────────────────────────────────────────────
+GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
+info()    { printf "${BLUE}  →${NC} %s\n" "$*"; }
+success() { printf "${GREEN}  ✓${NC} %s\n" "$*"; }
+warn()    { printf "${YELLOW}  !${NC} %s\n" "$*"; }
+error()   { printf "${RED}  ✗${NC} %s\n" "$*"; exit 1; }
 
-if [ ! -d "${SOURCE}" ]; then
-  echo "Error: skill directory not found at ${SOURCE}"
-  echo "Run this script from the root of the cloned repository."
-  exit 1
-fi
+echo ""
+echo "  eli5-mode installer"
+echo "  ───────────────────"
+echo ""
+
+command -v claude >/dev/null 2>&1 || error "claude not found. Install Claude Code first: https://claude.ai/code"
 
 mkdir -p "${SKILLS_DIR}"
 
-if [ -d "${DEST}" ]; then
-  echo "Existing install found — replacing it."
-  rm -rf "${DEST}"
-fi
+for skill in "${SKILLS[@]}"; do
+  src="${REPO_DIR}/skills/${skill}"
+  dest="${SKILLS_DIR}/${skill}"
 
-cp -r "${SOURCE}" "${DEST}"
+  if [ ! -d "${src}" ]; then
+    warn "Skill not found at ${src} — skipping."
+    continue
+  fi
 
-echo "Done. ${SKILL_NAME} installed to ${DEST}"
+  if [ -d "${dest}" ]; then
+    info "Updating ${skill}..."
+    rm -rf "${dest}"
+  else
+    info "Installing ${skill}..."
+  fi
+
+  cp -r "${src}" "${dest}"
+  success "${skill} → ${dest}"
+done
+
 echo ""
-echo "Start a new Claude Code session and say 'eli5' to activate."
+echo "  All done. Start a new Claude Code session and try:"
+echo ""
+echo "    /eli5          → 5-year-old level (default)"
+echo "    /eli-kid       → 10-year-old"
+echo "    /eli-teen      → 15-year-old"
+echo "    /eli-adult     → smart non-expert"
+echo "    /eli-expert    → expert in adjacent field"
+echo ""
+echo "  Or just say: eli5, dumb it down, explain like i'm 5"
+echo ""

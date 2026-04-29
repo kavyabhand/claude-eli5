@@ -4,13 +4,22 @@ param()
 
 $ErrorActionPreference = 'Stop'
 
-$SkillName = 'eli5-mode'
-$Dest      = Join-Path $env:USERPROFILE ".claude\skills\$SkillName"
+$Skills    = @('eli5-mode', 'eli-kid', 'eli-teen', 'eli-adult', 'eli-expert')
+$SkillsDir = Join-Path $env:USERPROFILE '.claude\skills'
+$removed   = 0
 
-if (-not (Test-Path $Dest)) {
-    Write-Host "$SkillName is not installed."
-    exit 0
+foreach ($skill in $Skills) {
+    $dest = Join-Path $SkillsDir $skill
+    if (Test-Path $dest) {
+        Remove-Item -Recurse -Force $dest
+        Write-Host "  ✓ Removed ${skill}" -ForegroundColor Green
+        $removed++
+    }
 }
 
-Remove-Item -Recurse -Force $Dest
-Write-Host "Uninstalled $SkillName."
+if ($removed -eq 0) {
+    Write-Host "  ! Nothing to remove — eli5-mode was not installed." -ForegroundColor Yellow
+} else {
+    Write-Host ""
+    Write-Host "  eli5-mode uninstalled."
+}
