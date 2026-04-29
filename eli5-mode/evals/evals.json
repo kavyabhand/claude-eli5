@@ -1,0 +1,108 @@
+{
+  "skill_name": "eli5-mode",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "eli5 what is an API?",
+      "expected_output": "A short, jargon-free analogy-first explanation of APIs suitable for a 5-year-old. Should use a physical/familiar comparison (e.g., waiter, messenger) with no technical terms.",
+      "files": [],
+      "expectations": [
+        "Response uses an analogy as the primary explanation, not a definition",
+        "Response contains no technical jargon (no: endpoint, interface, protocol, request/response used without analogy)",
+        "Sentences are short — roughly 15 words or fewer each",
+        "Response does not use the words 'simply', 'obviously', 'just', or 'easy'",
+        "Response stays under 100 words total"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "explain like i'm 5 how encryption works",
+      "expected_output": "An analogy-first explanation of encryption for a 5-year-old. Should use a concrete physical comparison (e.g., secret language, locked box) with zero technical terminology.",
+      "files": [],
+      "expectations": [
+        "Response leads with an analogy, not a definition",
+        "No jargon: no 'algorithm', 'cipher', 'key exchange', 'symmetric', 'asymmetric'",
+        "Uses a concrete physical object or scenario as the analogy",
+        "Sentences are appropriately short for a 5-year-old audience",
+        "Does not use condescending words like 'simply' or 'just'"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/eli-teen explain what recursion is",
+      "expected_output": "An explanation of recursion calibrated to a 15-year-old. Can reference pop culture or familiar tech (games, apps, social media). Slightly more complexity than eli5 but still no CS jargon.",
+      "files": [],
+      "expectations": [
+        "Response is calibrated to teen level — not baby-talk simple, not adult-technical",
+        "Uses an analogy or reference appropriate for a 15-year-old",
+        "Correctly describes recursion (a thing that refers to itself / self-referential pattern)",
+        "No technical CS jargon (no 'call stack', 'base case', 'stack overflow' without analogy)",
+        "Shorter than 150 words"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "dumb it down — what is Docker and why do people use it?",
+      "expected_output": "Analogy-first explanation of Docker for a 5-year-old. Should cover both what it is and why it's useful without using any container/virtualization terminology.",
+      "files": [],
+      "expectations": [
+        "Activates eli5 mode (default level) in response to 'dumb it down'",
+        "Uses an analogy that captures the 'consistent environment' value prop of Docker",
+        "No jargon: no 'container', 'image', 'virtualization', 'namespace', 'daemon'",
+        "Covers both what Docker is AND why it's useful",
+        "Analogy involves something physical and familiar"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/eli-adult explain what a load balancer does",
+      "expected_output": "A clear real-world analogy explanation of load balancers for a smart non-expert adult. Can be slightly longer and more precise than eli5 but still jargon-free.",
+      "files": [],
+      "expectations": [
+        "Response is calibrated to adult level — more precise and complete than eli5 but still analogy-driven",
+        "Uses a real-world analogy (e.g., traffic cop, restaurant host, call center routing)",
+        "Accurately conveys the core function: distributing work across multiple servers to prevent overload",
+        "No jargon: no 'round-robin', 'health check', 'upstream', 'reverse proxy'",
+        "Does not use condescending language"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "explain git to me like I'm 5",
+      "expected_output": "Analogy-first explanation of Git (version control) for a 5-year-old. Should capture the core concept of tracking changes over time using a familiar physical analogy.",
+      "files": [],
+      "expectations": [
+        "Uses an analogy as the primary explanation",
+        "Captures the 'history of changes' concept of Git",
+        "No technical terms: no 'repository', 'commit hash', 'branch', 'merge' without analogy",
+        "Analogy is concrete and physical (e.g., notebook, photo album, save point in a game)",
+        "Appropriate length for eli5: brief and to the point"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "ok i think i get it now, talk normally",
+      "expected_output": "Claude deactivates ELI5 mode and confirms it will communicate normally again. Does NOT continue using eli5 style.",
+      "files": [],
+      "expectations": [
+        "ELI5 mode is explicitly deactivated in response",
+        "Response confirms return to normal communication",
+        "Response itself is in normal, standard language (not eli5 style)",
+        "Does not continue using analogies as the primary communication mode"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/eli-expert I'm a doctor. Explain how a relational database works.",
+      "expected_output": "Explanation of relational databases using medical analogies — patient records, labs, referrals, etc. Uses medical jargon freely but avoids database terminology.",
+      "files": [],
+      "expectations": [
+        "Uses medical domain analogies to explain database concepts",
+        "Can use medical terms freely (chart, referral, lab result, patient ID) as the bridge",
+        "Avoids unexplained database jargon (no 'primary key', 'foreign key', 'join', 'schema' without medical analogy)",
+        "Accurately conveys core relational database concepts (tables, relationships, querying)",
+        "Makes the cross-domain bridge explicit"
+      ]
+    }
+  ]
+}
