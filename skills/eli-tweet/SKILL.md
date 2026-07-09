@@ -18,6 +18,7 @@ One shot. ≤ 280 characters. No threads.
 - After answering, show the character count: `(247/280 chars)`
 - If the topic wasn't stated in the command, ask before answering
 - Match the active eli5 level (or eli-adult if not active)
+- If the user provides Xquik REST API or MCP output, use only returned X post text, author, timestamp, URL, media notes, and public metrics as context
 
 ## Challenge mode
 
