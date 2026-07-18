@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# eli5-session-start.sh — SessionStart hook
+# eli5-session-start.sh - SessionStart hook
 #
 # Auto-activates eli5-mode if .eli5rc is found in the project dir or ~/.eli5rc.
 # Also reads passive_mode and proactive flags for background jargon awareness.
@@ -29,11 +29,11 @@ SKILL_DIR="$(dirname "$0")/../skills/eli5-mode/references"
 LABEL="" CMD="" HINT=""
 if [ -n "$LEVEL" ]; then
   case "$LEVEL" in
-    eli5|5)               LABEL="5-year-old"         CMD="/eli5"       HINT="Toys/food/animals. ≤15 words/sentence." ;;
-    eli-kid|kid|10)       LABEL="10-year-old"        CMD="/eli-kid"    HINT="School analogies. Cause-effect framing." ;;
-    eli-teen|teen|15)     LABEL="15-year-old"        CMD="/eli-teen"   HINT="Pop culture/gaming. Get to the point fast." ;;
-    eli-adult|adult)      LABEL="smart non-expert"   CMD="/eli-adult"  HINT="Real-world analogies. No domain knowledge assumed." ;;
-    eli-expert|expert)    LABEL="expert bridge"      CMD="/eli-expert" HINT="Use their domain vocabulary as the bridge." ;;
+    eli5|5)               LEVEL="eli5";        LABEL="5-year-old"         CMD="/eli5"       HINT="Toys/food/animals. ≤15 words/sentence." ;;
+    eli-kid|kid|10)       LEVEL="eli-kid";     LABEL="10-year-old"        CMD="/eli-kid"    HINT="School analogies. Cause-effect framing." ;;
+    eli-teen|teen|15)     LEVEL="eli-teen";    LABEL="15-year-old"        CMD="/eli-teen"   HINT="Pop culture/gaming. Get to the point fast." ;;
+    eli-adult|adult)      LEVEL="eli-adult";   LABEL="smart non-expert"   CMD="/eli-adult"  HINT="Real-world analogies. No domain knowledge assumed." ;;
+    eli-expert|expert)    LEVEL="eli-expert";  LABEL="expert bridge"      CMD="/eli-expert" HINT="Use their domain vocabulary as the bridge." ;;
     *) LEVEL="" ;;
   esac
 fi
@@ -46,7 +46,7 @@ if [ -n "$LEVEL" ]; then
 fi
 
 # Save expert field if provided
-if [ -n "$EXPERT_FIELD" ] && [ "$LEVEL" = "eli-expert" -o "$LEVEL" = "expert" ]; then
+if [ -n "$EXPERT_FIELD" ] && [ "$LEVEL" = "eli-expert" ]; then
   mkdir -p .claude
   printf '%s' "$EXPERT_FIELD" > .claude/eli5-expert-field
 fi
@@ -59,7 +59,7 @@ CONTEXT=""
 if [ -n "$LEVEL" ]; then
   FIELD_CONTEXT=""
   if [ -n "$EXPERT_FIELD" ]; then
-    FIELD_CONTEXT=" User's expert field: ${EXPERT_FIELD}. Use this vocabulary as your bridge — do not ask for it again."
+    FIELD_CONTEXT=" User's expert field: ${EXPERT_FIELD}. Use this vocabulary as your bridge - do not ask for it again."
   fi
 
   CORE_RULES=""
@@ -83,14 +83,14 @@ ${CORE_RULES}"
 Core rules: analogy-first (never define, always compare), kill jargon (replace not explain), short sentences, accurate (simpler ≠ wrong), concrete over abstract (food/toys/buildings not systems), no condescension (ban simply/obviously/just/easy), persist every response, safety exception (warnings always plain first).
 
 Drift protocol: if jargon creeps in, correct immediately. Treat drift as a bug.
-Different analogy protocol: if user says 'different analogy', 'that didn't help', 'try again' — generate a completely new analogy, never reuse one from this session.
+Different analogy protocol: if user says 'different analogy', 'that didn't help', 'try again' - generate a completely new analogy, never reuse one from this session.
 Deactivate on: stop eli5 · normal mode · talk normally · /eli-off"
   fi
 fi
 
-# Passive jargon scan (works even without a level — background mode)
+# Passive jargon scan (works even without a level - background mode)
 if [ "$PASSIVE_MODE" = "true" ]; then
-  PASSIVE_CTX="PASSIVE JARGON SCAN ACTIVE: After each response, review what you wrote. If you used any unexplained technical term, append a brief plain-language note at the end using this format: '📌 Quick note: [term] = [plain-language equivalent in ≤ 10 words]'. Only add the note if there's actual unexplained jargon — don't add it to simple responses."
+  PASSIVE_CTX="PASSIVE JARGON SCAN ACTIVE: After each response, review what you wrote. If you used any unexplained technical term, append a brief plain-language note at the end using this format: '📌 Quick note: [term] = [plain-language equivalent in ≤ 10 words]'. Only add the note if there's actual unexplained jargon - don't add it to simple responses."
   if [ -n "$CONTEXT" ]; then
     CONTEXT="${CONTEXT}
 
